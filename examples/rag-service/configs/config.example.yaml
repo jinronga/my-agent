@@ -1,0 +1,13 @@
+server:
+  addr: ":8080"
+  read_header_timeout: "3s"
+  request_timeout: "8s"
+
+policy:
+  max_query_length: 2000
+  default_max_results: 3
+  max_results_limit: 10
+
+retrieval:
+  mode: "memory"
+

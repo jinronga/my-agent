@@ -139,7 +139,27 @@ func uint32FromFloat32(v float32) uint32 {
 }
 
 func decodeSearchResult(raw interface{}) []map[string]interface{} {
-	// 生产环境里应解析 Redis 原始响应并转换成强类型结构体。
-	_ = raw
-	return []map[string]interface{}{}
+	values, ok := raw.([]interface{})
+	if !ok || len(values) < 2 {
+		return nil
+	}
+
+	results := make([]map[string]interface{}, 0, (len(values)-1)/2)
+	for i := 1; i+1 < len(values); i += 2 {
+		item := map[string]interface{}{
+			"key": values[i],
+		}
+
+		fields, ok := values[i+1].([]interface{})
+		if !ok {
+			results = append(results, item)
+			continue
+		}
+		for j := 0; j+1 < len(fields); j += 2 {
+			name := fmt.Sprint(fields[j])
+			item[name] = fields[j+1]
+		}
+		results = append(results, item)
+	}
+	return results
 }
