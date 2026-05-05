@@ -27,11 +27,14 @@ type Server struct {
 	QueryService QueryService
 }
 
-type noopQueryService struct{}
+type staticQueryService struct{}
 
-func (noopQueryService) HandleQuery(_ context.Context, query QueryRequest) (QueryResponse, error) {
+func (staticQueryService) HandleQuery(_ context.Context, query QueryRequest) (QueryResponse, error) {
 	return QueryResponse{
-		Answer: "stub answer for query: " + query.Query,
+		Answer: "example answer for query: " + query.Query,
+		Citations: []string{
+			"example-doc:chunk-1",
+		},
 	}, nil
 }
 
@@ -63,7 +66,7 @@ func (s Server) routes() http.Handler {
 
 func main() {
 	server := Server{
-		QueryService: noopQueryService{},
+		QueryService: staticQueryService{},
 	}
 
 	srv := &http.Server{
